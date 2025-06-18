@@ -1,0 +1,86 @@
+@page "{id:int}"
+@model CheckYourMind.Pages.Cases.DetailsModel
+@{
+    ViewData["Title"] = Model.Case?.Title ?? "Детали кейса";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>@Model.Case?.Title</h1>
+            <div class="mb-3">
+                <span class="badge bg-primary">Сложность: @Model.Case?.Difficulty</span>
+                <span class="badge bg-secondary">@Model.Case?.Category</span>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Описание</h5>
+                    <p class="card-text">@Model.Case?.Description</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Ваше решение</h5>
+                    <form method="post">
+                        <input type="hidden" name="id" value="@Model.Case?.Id" />
+                        <div class="form-group">
+                            <label for="goCode">Код на Go:</label>
+                            <textarea class="form-control" id="goCode" name="GoCode" rows="10" required>@Model.GoCode</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Проверить решение</button>
+                    </form>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ExecutionResult))
+            {
+                <div class="alert @(Model.ExecutionResult.Contains("успешно") ? "alert-success" : "alert-danger")">
+                    @Model.ExecutionResult
+                </div>
+            }
+
+            @if (Model.TestResults != null && Model.TestResults.Any())
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Результаты тестов</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Тест</th>
+                                        <th>Вход</th>
+                                        <th>Ожидаемый результат</th>
+                                        <th>Полученный результат</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var result in Model.TestResults)
+                                    {
+                                        <tr>
+                                            <td>@result.TestName</td>
+                                            <td>@result.Input</td>
+                                            <td>@result.ExpectedOutput</td>
+                                            <td>@result.ActualOutput</td>
+                                            <td>
+                                                <span class="badge @(result.Passed ? "bg-success" : "bg-danger")">
+                                                    @(result.Passed ? "Пройден" : "Провален")
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

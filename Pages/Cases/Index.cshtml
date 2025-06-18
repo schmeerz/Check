@@ -1,0 +1,52 @@
+@page
+@model CheckYourMind.Pages.Cases.IndexModel
+@{
+    ViewData["Title"] = "Кейсы";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Кейсы</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-page="./Create" class="btn btn-primary">Создать кейс</a>
+        </div>
+    </div>
+
+    @if (!Model.Cases.Any())
+    {
+        <div class="alert alert-info">
+            Кейсы пока не добавлены. Будьте первым, кто создаст кейс!
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var caseItem in Model.Cases)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">@caseItem.Title</h5>
+                                <span class="badge @(caseItem.Difficulty switch {
+                                    1 => "bg-success",
+                                    2 => "bg-info",
+                                    3 => "bg-warning",
+                                    4 => "bg-danger",
+                                    _ => "bg-dark"
+                                })">@caseItem.Difficulty</span>
+                            </div>
+                            <p class="card-text">@(caseItem.Description.Length > 200 ? caseItem.Description.Substring(0, 200) + "..." : caseItem.Description)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">@caseItem.Category</span>
+                                <a href="/Cases/Details/@caseItem.Id" class="btn btn-outline-primary">Решить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div> 

@@ -1,0 +1,163 @@
+@page
+@model CheckYourMind.Pages.Cases.CreateModel
+@{
+    ViewData["Title"] = "Создать кейс";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" id="createCaseForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Case.Title" class="form-label"></label>
+                            <input asp-for="Case.Title" class="form-control" placeholder="Введите название кейса" />
+                            <span asp-validation-for="Case.Title" class="text-danger"></span>
+                            <small class="form-text text-muted">Название должно быть от 3 до 100 символов</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Case.Description" class="form-label"></label>
+                            <textarea asp-for="Case.Description" class="form-control" rows="5" 
+                                    placeholder="Опишите задачу, требования и ограничения"></textarea>
+                            <span asp-validation-for="Case.Description" class="text-danger"></span>
+                            <small class="form-text text-muted">Минимум 50 символов. Включите примеры входных и выходных данных</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Case.Difficulty" class="form-label"></label>
+                            <select asp-for="Case.Difficulty" class="form-select">
+                                <option value="">Выберите сложность</option>
+                                <option value="1">Легкая (1)</option>
+                                <option value="2">Простая (2)</option>
+                                <option value="3">Средняя (3)</option>
+                                <option value="4">Сложная (4)</option>
+                                <option value="5">Очень сложная (5)</option>
+                            </select>
+                            <span asp-validation-for="Case.Difficulty" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Case.Category" class="form-label"></label>
+                            <select asp-for="Case.Category" class="form-select">
+                                <option value="">Выберите категорию</option>
+                                <option value="Алгоритмы">Алгоритмы</option>
+                                <option value="Структуры данных">Структуры данных</option>
+                                <option value="Динамическое программирование">Динамическое программирование</option>
+                                <option value="Графы">Графы</option>
+                                <option value="Строки">Строки</option>
+                                <option value="Математика">Математика</option>
+                                <option value="Базы данных">Базы данных</option>
+                                <option value="Системное программирование">Системное программирование</option>
+                            </select>
+                            <span asp-validation-for="Case.Category" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">Тестовые случаи</label>
+                            <div id="testCases">
+                                <div class="test-case mb-3 p-3 border rounded">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Входные данные</label>
+                                            <textarea name="Case.TestCases[0].Input" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Ожидаемый результат</label>
+                                            <textarea name="Case.TestCases[0].ExpectedOutput" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="form-label">Описание теста</label>
+                                            <input type="text" name="Case.TestCases[0].Description" class="form-control" placeholder="Краткое описание теста" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addTestCase()">
+                                <i class="fas fa-plus"></i> Добавить тест
+                            </button>
+                            <small class="form-text text-muted">Добавьте хотя бы один тестовый случай</small>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Создать кейс
+                            </button>
+                            <a asp-page="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Назад к списку
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let testCaseCount = 1;
+
+        function addTestCase() {
+            const testCasesContainer = document.getElementById('testCases');
+            const newTestCase = document.createElement('div');
+            newTestCase.className = 'test-case mb-3 p-3 border rounded';
+            newTestCase.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Входные данные</label>
+                        <textarea name="Case.TestCases[${testCaseCount}].Input" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Ожидаемый результат</label>
+                        <textarea name="Case.TestCases[${testCaseCount}].ExpectedOutput" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <label class="form-label">Описание теста</label>
+                        <input type="text" name="Case.TestCases[${testCaseCount}].Description" class="form-control" placeholder="Краткое описание теста" required>
+                    </div>
+                    <div class="col-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTestCase(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            testCasesContainer.appendChild(newTestCase);
+            testCaseCount++;
+        }
+
+        function removeTestCase(button) {
+            const testCase = button.closest('.test-case');
+            testCase.remove();
+        }
+
+        // Автоматическое изменение высоты текстовых полей
+        document.addEventListener('input', function(e) {
+            if (e.target.tagName === 'TEXTAREA') {
+                e.target.style.height = 'auto';
+                e.target.style.height = (e.target.scrollHeight) + 'px';
+            }
+        });
+
+        // Добавляем обработчик отправки формы
+        document.getElementById('createCaseForm').addEventListener('submit', function(e) {
+            const testCases = document.querySelectorAll('.test-case');
+            if (testCases.length === 0) {
+                e.preventDefault();
+                alert('Добавьте хотя бы один тестовый случай');
+                return false;
+            }
+            return true;
+        });
+    </script>
+} 
